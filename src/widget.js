@@ -1,20 +1,27 @@
-// widget.js
-(function () {
-    // Create a container element for the widget
-    var container = document.createElement('div');
-    
-    // Customize the widget's appearance
-    container.style.border = '1px solid #ccc';
-    container.style.padding = '10px';
-    
-    // Create the widget's content
-    var message = document.createElement('p');
-    message.textContent = 'Hello, World!';
-    
-    // Append the content to the container
-    container.appendChild(message);
-    
-    // Append the container to the host page's body
-    document.body.appendChild(container);
-  })();
-  
+// script.js
+var widget = document.getElementById('widget-container');
+
+function openWidget() {
+  var widgetHTML = `
+    <div id="custom-widget" class="widget">
+      <div class="widget-content">
+        <p>Hello, World!</p>
+        <button id="close-widget">Close</button>
+      </div>
+    </div>
+  `;
+
+  widget.innerHTML = widgetHTML;
+  var closeButton = document.getElementById('close-widget');
+  widget.style.display = 'block';
+  closeButton.addEventListener('click', closeWidget);
+}
+
+function closeWidget() {
+  widget.style.display = 'none';
+  widget.innerHTML = '';
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  openWidget();
+});

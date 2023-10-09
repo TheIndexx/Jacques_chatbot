@@ -6,30 +6,19 @@
     <title>Increment Number</title>
 </head>
 <body>
-    <!-- Add a placeholder div where you want the widget to appear -->
-    <div id="widget-container"></div>
-        
-    <!-- Include the JavaScript file for the widget -->
-    <script src="https://652382aed8432b379ddbcf92--super-kitsune-086113.netlify.app/"></script>
     <h1>Number: <span id="number">0</span></h1>
     <button id="incrementButton">Increment</button>
-
     <script>
-        // Get references to the button and number span elements
         const incrementButton = document.getElementById("incrementButton");
         const numberSpan = document.getElementById("number");
-
-        // Initialize the number to 0
         let count = 0;
-
-        // Add a click event listener to the button
         incrementButton.addEventListener("click", () => {
-            // Increment the count by 1
             count += 1;
-
-            // Update the number displayed on the page
             numberSpan.textContent = count;
         });
     </script>
+
+    <div id="widget-container"></div>
+    <script src="src/widget.js"></script>
 </body>
 </html>
