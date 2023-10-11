@@ -1,5 +1,6 @@
 var widget = document.getElementById('widget-container');
 let messageData = [];
+let recommendationData = [];
 
 function storeMessage(content, sender) {
     const message = {
@@ -7,6 +8,15 @@ function storeMessage(content, sender) {
         sender: sender
     };
     messageData.push(message);
+}
+
+function storeRecs(image_link, name, price) {
+    const rec = {
+        image_link: image_link,
+        name: name,
+        price: price
+    };
+    recommendationData.push(rec);
 }
 
 function handleUserInput(event) {
@@ -18,9 +28,9 @@ function handleUserInput(event) {
 function sendMessage(mandatory_response = 0) {
     const userInput = document.getElementById("user-input");
     let message = userInput.value;
-    if (isNaN(mandatory_response) || mandatory_response === "") { //Mandatory response is a string meaning we're bringing it back
+    if (isNaN(mandatory_response) || mandatory_response === "") {
         message = mandatory_response;
-    } else { // Mandatory response is a number meaning its a user message
+    } else {
         storeMessage(message, 'user');
     }
     if (message.trim() === "") {
@@ -47,12 +57,12 @@ function sendMessage(mandatory_response = 0) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
     
     if (!isNaN(mandatory_response)) {
-        BotResponse(first_message = false, user_response = message);
+        BotResponse(user_response = message);
     }
     userInput.value = "";
 }
 
-function BotResponse(first_message = false, user_response = 0, mandatory_response = 0) {
+function BotResponse(user_response = 0, mandatory_response = 0) {
     const chatMessages = document.getElementById("chat-messages");
     const botMessageElement = document.createElement("div");
     botMessageElement.classList.add("bot-message");
@@ -70,21 +80,52 @@ function BotResponse(first_message = false, user_response = 0, mandatory_respons
     botMessageElement.style.fontSize = '15px';
 
     let message = '';
-    if (first_message === true) {
-        message = "Bonjour ~ I'm Jacques, an AI suit connoisseur. What brings you to League of Rebels today?";
-        storeMessage(message, 'bot');
+    if (isNaN(mandatory_response)) {
+        message = mandatory_response;
     }
-    else if (isNaN(user_response)) {
+    else {
         message = '"' + user_response + '"';
         storeMessage(message, 'bot');
-    }
-    else if (isNaN(mandatory_response)) {
-        message = mandatory_response;
+
+        addRecommendation(image_link = "https://cdn.shoplightspeed.com/shops/639523/files/54751377/465x620x2/sb2-spelman-jacket.jpg", title="SB2 Spelman Jacket", price='$349.00');
+        storeRecs("https://cdn.shoplightspeed.com/shops/639523/files/54751377/465x620x2/sb2-spelman-jacket.jpg", "SB2 Spelman Jacket", '$349.00');
     }
     botMessageElement.textContent = message;
     chatMessages.appendChild(botMessageElement);
 
     chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function addRecommendation(image_link, image_title, image_price) {
+    const browsingArea = document.getElementById("browsing-area");
+    const recElement = document.createElement("div");
+    recElement.classList.add("recommendation");
+
+    recElement.style.margin = '15px';
+    recElement.style.backgroundColor = '#f0eee9';
+    recElement.style.width = '42%';
+    recElement.style.height = '60%';
+    recElement.style.borderRadius = '5px';
+    recElement.style.boxShadow = '0 3px 3px -2px black';
+
+    const image = document.createElement("img");
+    image.classList.add("recommendation_image");
+    image.src = image_link;
+    image.style.width = '100%';
+    image.style.height = '80%';
+
+    const title = document.createElement("div");
+    title.classList.add("recommendation_info");
+    title.textContent = image_price + " | " + image_title ;
+    title.style.fontFamily = 'Stencil Std, fantasy ';
+    title.style.fontSize = '15px';
+    title.style.marginLeft = '3px';
+    title.style.overflow = 'hidden';
+    title.style.textOverflow = 'ellipsis';
+
+    recElement.appendChild(image);
+    recElement.appendChild(title);
+    browsingArea.appendChild(recElement);
 }
 
 function closeWidget() {
@@ -114,7 +155,7 @@ function openWidget() {
     var widgetHTML = `
     <div id="browsing-panel">
         <div id="browsing-header">Recommendations</div>
-        <div id="browsing-area">(Where recommendations show up)</div>
+        <div id="browsing-area"></div>
     </div>
     <div id='chatbot'>
         <div id="chat-header">
@@ -146,13 +187,21 @@ function openWidget() {
     // Browsing Panel CSS
     var browsingPanel = document.getElementById('browsing-panel');
     browsingPanel.style.backgroundColor = '#f0ede5';
-    
+
     var browsingHeader = document.getElementById('browsing-header');
     browsingHeader.style.padding = '10px';
     browsingHeader.style.color = 'black';
     browsingHeader.style.fontSize = '18px';
     browsingHeader.style.height = '20px';
     browsingHeader.style.boxShadow = '0 4px 2px -2px gray';
+    browsingHeader.style.position = 'relative';
+
+    var browsingArea = document.getElementById('browsing-area');
+    browsingArea.style.width = '100%';
+    browsingArea.style.height = '455px';
+    browsingArea.style.overflowY = 'auto';
+    browsingArea.style.display = 'flex';
+    browsingArea.style.flexWrap = 'wrap';
 
     // Chatbot CSS
     var chatbot = document.getElementById('chatbot');
@@ -172,12 +221,10 @@ function openWidget() {
     closeButton.style.marginLeft = '10px';
     closeButton.style.height = '100%';
     closeButton.style.cursor = 'pointer';
-    closeButton.addEventListener('click', closeWidget);
 
     var chatMessages = document.getElementById('chat-messages');
     chatMessages.style.padding = '10px';
     chatMessages.style.overflowY = 'auto';
-    chatMessages.style.flex = '1';
     chatMessages.style.height = '77%';
 
     var inputArea = document.getElementById('chat-input');
@@ -201,20 +248,24 @@ function openWidget() {
     sendButton.style.cursor = 'pointer';
 
     if (messageData.length == 0) {
-        BotResponse(first_message = true);
+        BotResponse(user_response = 0, mandatory_response = "Bonjour ~ I'm Jacques, an AI suit connoisseur. What brings you to League of Rebels today?");
+        storeMessage("Bonjour ~ I'm Jacques, an AI suit connoisseur. What brings you to League of Rebels today?", 'bot');
     }
     else {
         console.log(messageData.length);
         for (var message of messageData) {
             if (message.sender == 'bot') {
                 console.log('loading bot message...' + message.content);
-                BotResponse(first_message = false, user_response = 0, mandatory_response = String(message.content));
+                BotResponse(user_response = 0, mandatory_response = String(message.content));
             }
             else if (message.sender == 'user') {
                 console.log('loading user message...' + message.content);
                 sendMessage(mandatory_response = String(message.content));
             }
         }
+    }
+    for (var rec of recommendationData) {
+        addRecommendation(rec.image_link, rec.name, rec.price);
     }
 }
 
