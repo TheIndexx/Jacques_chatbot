@@ -19,24 +19,10 @@ function storeRecs(image_link, name, price) {
     recommendationData.push(rec);
 }
 
-function getModelOutput(message) {
-    apiUrl = "https://stylist-api.vercel.app/get-response/" + message.replace(/\s/g, '-');
-    fetch(apiUrl)
-        .then(response => {
-            // Check if the response status code indicates success (e.g., 200 OK)
-            if (response.status === 200) {
-            return response.json(); // Parse the JSON response
-            } else {
-            throw new Error('Request failed with status ' + response.status);
-            }
-        })
-        .then(data => {
-            return data; // Do something with the data
-        })
-        .catch(error => {
-            // Handle errors, e.g., network errors or invalid response
-            console.error('API request error:', error);
-        });
+async function getModelOutput(message) {
+    let response = await fetch("https://stylist-api.vercel.app/get-response/" + message.replace(/\s/g, '-'));
+    let output = await response
+    return output
 }
 
 function handleUserInput(event) {
@@ -104,11 +90,21 @@ function BotResponse(user_response = 0, mandatory_response = 0) {
         message = mandatory_response;
     }
     else {
-        message = getModelOutput(user_response);
-        storeMessage(message, 'bot');
+        getModelOutput(user_response)
+            .then(output => {
+                message = output;
+                storeMessage(message, 'bot');
+                return output;
+            })
+            .then(output => {
+                addRecommendation("https://cdn.shoplightspeed.com/shops/639523/files/54751377/465x620x2/sb2-spelman-jacket.jpg", "SB2 Spelman Jacket", '$349.00');
+                storeRecs("https://cdn.shoplightspeed.com/shops/639523/files/54751377/465x620x2/sb2-spelman-jacket.jpg", "SB2 Spelman Jacket", '$349.00');
+            })
+            .catch(error => {
+                console.error('An error occurred:', error);
+                message = "Sorry, I spazzed out there for a second. Could you say that again?";
+            });
 
-        addRecommendation(image_link = "https://cdn.shoplightspeed.com/shops/639523/files/54751377/465x620x2/sb2-spelman-jacket.jpg", title="SB2 Spelman Jacket", price='$349.00');
-        storeRecs("https://cdn.shoplightspeed.com/shops/639523/files/54751377/465x620x2/sb2-spelman-jacket.jpg", "SB2 Spelman Jacket", '$349.00');
     }
     botMessageElement.textContent = message;
     chatMessages.appendChild(botMessageElement);
