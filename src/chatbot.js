@@ -19,6 +19,26 @@ function storeRecs(image_link, name, price) {
     recommendationData.push(rec);
 }
 
+function getModelOutput(message) {
+    apiUrl = "https://stylist-api.vercel.app/get-response/" + message.replace(/\s/g, '-');
+    fetch(apiUrl)
+        .then(response => {
+            // Check if the response status code indicates success (e.g., 200 OK)
+            if (response.status === 200) {
+            return response.json(); // Parse the JSON response
+            } else {
+            throw new Error('Request failed with status ' + response.status);
+            }
+        })
+        .then(data => {
+            return data; // Do something with the data
+        })
+        .catch(error => {
+            // Handle errors, e.g., network errors or invalid response
+            console.error('API request error:', error);
+        });
+}
+
 function handleUserInput(event) {
     if (event.key === "Enter") {
         sendMessage();
@@ -84,7 +104,7 @@ function BotResponse(user_response = 0, mandatory_response = 0) {
         message = mandatory_response;
     }
     else {
-        message = '"' + user_response + '"';
+        message = getModelOutput(user_response);
         storeMessage(message, 'bot');
 
         addRecommendation(image_link = "https://cdn.shoplightspeed.com/shops/639523/files/54751377/465x620x2/sb2-spelman-jacket.jpg", title="SB2 Spelman Jacket", price='$349.00');
