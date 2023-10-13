@@ -1,3 +1,4 @@
+// Jacques chatbot.js
 var widget = document.getElementById('widget-container');
 let messageData = [];
 let recommendationData = [];
