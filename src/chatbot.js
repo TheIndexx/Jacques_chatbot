@@ -21,8 +21,8 @@ function storeRecs(image_link, name, price) {
 
 async function getModelOutput(message) {
     let response = await fetch("https://stylist-api.vercel.app/get-response/" + message.replace(/\s/g, '-'));
-    let output = await response
-    return output
+    let output = await response.json();
+    return output['bot_response']
 }
 
 function handleUserInput(event) {
@@ -88,41 +88,63 @@ function BotResponse(user_response = 0, mandatory_response = 0) {
     let message = '';
     if (isNaN(mandatory_response)) {
         message = mandatory_response;
+        botMessageElement.textContent = message;
+        chatMessages.appendChild(botMessageElement);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     else {
+        const loading_text_list = ["Let's see here...", "One sec...", "Pulling up some items...", "Browsing our options...", "Thinking super hard...", "Hmm..."]
+        const loadingText = document.createElement("div");
+        loadingText.classList.add("loading-text");
+        loadingText.textContent = loading_text_list[Math.floor(Math.random() * loading_text_list.length)];
+        loadingText.style.color = "gray";
+        loadingText.style.fontSize = "12px";
+        loadingText.style.marginBottom = "5px";
+        loadingText.style.marginRight = "50%";
+        chatMessages.appendChild(loadingText);
+
         getModelOutput(user_response)
             .then(output => {
                 message = output;
-                storeMessage(message, 'bot');
+                console.log("Api Done: "+new Date());
                 return output;
             })
             .then(output => {
-                addRecommendation("https://cdn.shoplightspeed.com/shops/639523/files/54751377/465x620x2/sb2-spelman-jacket.jpg", "SB2 Spelman Jacket", '$349.00');
-                storeRecs("https://cdn.shoplightspeed.com/shops/639523/files/54751377/465x620x2/sb2-spelman-jacket.jpg", "SB2 Spelman Jacket", '$349.00');
+                storeMessage(message, 'bot');
+                addRecommendation();
+                storeRecs();
+                botMessageElement.textContent = message;
+                chatMessages.appendChild(botMessageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                chatMessages.removeChild(loadingText);
             })
             .catch(error => {
-                console.error('An error occurred:', error);
                 message = "Sorry, I spazzed out there for a second. Could you say that again?";
+                botMessageElement.textContent = message;
+                chatMessages.appendChild(botMessageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                chatMessages.removeChild(loadingText);
             });
-
     }
-    botMessageElement.textContent = message;
-    chatMessages.appendChild(botMessageElement);
-
-    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-function addRecommendation(image_link, image_title, image_price) {
+function addRecommendation(image_link="https://cdn.shoplightspeed.com/shops/639523/files/54751377/465x620x2/sb2-spelman-jacket.jpg",
+                            image_title="SB2 Spelman Jacket Astafirullagh",
+                            image_price="$349.00",
+                            product_link="https://www.leagueofrebels.com/sb2-spelman-jacket.html") {
     const browsingArea = document.getElementById("browsing-area");
-    const recElement = document.createElement("div");
+    const recElement = document.createElement("a");
     recElement.classList.add("recommendation");
+    recElement.href = product_link;
+    recElement.target = "_blank";
 
     recElement.style.margin = '15px';
     recElement.style.backgroundColor = '#f0eee9';
     recElement.style.width = '42%';
     recElement.style.height = '60%';
     recElement.style.borderRadius = '5px';
-    recElement.style.boxShadow = '0 3px 3px -2px black';
+    recElement.style.boxShadow = '0 4px 10px -2px black';
+    recElement.style.textDecoration = 'none';
 
     const image = document.createElement("img");
     image.classList.add("recommendation_image");
@@ -132,39 +154,53 @@ function addRecommendation(image_link, image_title, image_price) {
 
     const title = document.createElement("div");
     title.classList.add("recommendation_info");
-    title.textContent = image_price + " | " + image_title ;
-    title.style.fontFamily = 'Stencil Std, fantasy ';
-    title.style.fontSize = '15px';
+    title.textContent = image_title ;
+    title.style.fontFamily = 'Arial Black, Times, serif';
+    title.style.fontSize = '16px';
     title.style.marginLeft = '3px';
     title.style.overflow = 'hidden';
     title.style.textOverflow = 'ellipsis';
+    title.style.whiteSpace = 'nowrap';
+
+    const price = document.createElement("div");
+    price.classList.add("recommendation_info");
+    price.textContent = image_price ;
+    price.style.fontFamily = 'Arial Black, Times, serif';
+    price.style.fontSize = '13px';
+    price.style.marginLeft = '3px';
+    price.style.overflow = 'hidden';
+    price.style.textOverflow = 'ellipsis';
+    price.style.whiteSpace = 'nowrap';
 
     recElement.appendChild(image);
     recElement.appendChild(title);
+    recElement.appendChild(price);
     browsingArea.appendChild(recElement);
 }
 
 function closeWidget() {
     var widgetHTML = `
-        <button id="open-button">Open</button>
+        <button id="open-button" onclick="openWidget()"><img src="https://cdn-icons-png.flaticon.com/512/24/24883.png" width="70" height="100"></button>
     `
     widget.innerHTML = widgetHTML;
     widget.style.all = 'initial';
-    widget.style.border = '1px solid #ccc';
-    widget.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)';
+    widget.style.backgroundColor = 'transparent';
     widget.style.position = 'fixed';
-    widget.style.height = '50px';
-    widget.style.width = '110px';
-    widget.style.bottom = '0px';
+    widget.style.height = '100px';
+    widget.style.width = '100px';
+    widget.style.bottom = '20px';
     widget.style.right = '20px';
-    widget.style.borderRadius = '5px';
-    
+    widget.style.borderRadius = '3px';
+
     var openButton = document.getElementById('open-button');
-    openButton.style.opacity = '0';
+    openButton.style.borderRadius = '100px';
+    openButton.style.border = '0px solid';
     openButton.style.width = '100%';
     openButton.style.height = '100%';
     openButton.style.cursor = 'pointer';
-    openButton.addEventListener('click', openWidget);
+    openButton.style.backgroundColor = '#f6ead1';
+    openButton.addEventListener('mouseover', function() {openButton.style.backgroundColor = '#b8aa85';});
+    openButton.addEventListener('mouseout', function() {openButton.style.backgroundColor = '#f6ead1';});
 }
 
 function openWidget() {
@@ -176,14 +212,12 @@ function openWidget() {
     <div id='chatbot'>
         <div id="chat-header">
             <div id="chat-title">Jacques, the AI Stylist</div>
-            <button id="close-button" onclick="closeWidget()">X</button>
+            <button id="close-button" onclick="closeWidget()"></button>
         </div>
-        <div id="chat-messages">
-            <!-- Chat messages will appear here -->
-        </div>
+        <div id="chat-messages"></div>
         <div id="chat-input">
             <input type="text" id="user-input" placeholder="Type your message..." onkeydown="handleUserInput(event)">
-            <button id="send-button" onclick="sendMessage()">Send</button>
+            <button id="send-button" onclick="sendMessage()"><img src="https://cdn-icons-png.flaticon.com/512/60/60525.png" width="16" height="16"></button>
         </div>
     </div>
     `;
@@ -211,6 +245,7 @@ function openWidget() {
     browsingHeader.style.height = '20px';
     browsingHeader.style.boxShadow = '0 4px 2px -2px gray';
     browsingHeader.style.position = 'relative';
+    browsingHeader.style.fontFamily = 'Arial Black, Times, serif';
 
     var browsingArea = document.getElementById('browsing-area');
     browsingArea.style.width = '100%';
@@ -230,13 +265,20 @@ function openWidget() {
     chatHeader.style.color = 'white';
     chatHeader.style.display = 'flex';
     chatHeader.style.justifyContent = 'space-between';
-    chatHeader.style.fontSize = '18px';
+    chatHeader.style.fontSize = '17px';
     chatHeader.style.boxShadow = '0 4px 2px -2px gray';
+    chatHeader.style.fontFamily = 'Arial Black, Times, serif';
 
     var closeButton = document.getElementById('close-button');
-    closeButton.style.marginLeft = '10px';
     closeButton.style.height = '100%';
+    closeButton.style.width = '6%';
     closeButton.style.cursor = 'pointer';
+    closeButton.style.border = '1px solid';
+    closeButton.style.borderRadius = '10px';
+    closeButton.style.backgroundColor = '#ed4040';
+    closeButton.addEventListener('mouseover', function() {closeButton.style.backgroundColor = '#d12424';});
+    closeButton.addEventListener('mouseout', function() {closeButton.style.backgroundColor = '#ed4040';});
+      
 
     var chatMessages = document.getElementById('chat-messages');
     chatMessages.style.padding = '10px';
@@ -250,7 +292,7 @@ function openWidget() {
 
     var inputBox = document.getElementById('user-input');
     inputBox.style.height = '30px';
-    inputBox.style.width = '75%';
+    inputBox.style.width = '83%';
     inputBox.style.padding = '5px 10px';
     inputBox.style.backgroundColor = 'rgb(60,60,60)';
     inputBox.style.color = 'white';
@@ -258,13 +300,13 @@ function openWidget() {
 
     var sendButton = document.getElementById('send-button');
     sendButton.style.display = 'inline-block'
-    sendButton.style.height = '100%';
-    sendButton.style.width = '17%';
-    sendButton.style.padding = '5px 10px';
+    sendButton.style.height = '40px';
+    sendButton.style.width = '40px';
+    sendButton.style.padding = '5px';
     sendButton.style.cursor = 'pointer';
 
     if (messageData.length == 0) {
-        BotResponse(user_response = 0, mandatory_response = "Bonjour ~ I'm Jacques, an AI suit connoisseur. What brings you to League of Rebels today?");
+        BotResponse(user_response = 0, mandatory_response = "Welcome to the League of Rebels store ~ I'm Jacques, an AI suit connoisseur. What are you looking for today?");
         storeMessage("Bonjour ~ I'm Jacques, an AI suit connoisseur. What brings you to League of Rebels today?", 'bot');
     }
     else {
@@ -286,6 +328,6 @@ function openWidget() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    openWidget();
+    closeWidget();
 });
   
