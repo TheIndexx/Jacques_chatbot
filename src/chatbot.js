@@ -142,7 +142,7 @@ function addRecommendation(image_link="https://cdn.shoplightspeed.com/shops/6395
     recElement.style.margin = '15px';
     recElement.style.backgroundColor = '#f0eee9';
     recElement.style.width = '42%';
-    recElement.style.height = '60%';
+    recElement.style.height = '50%';
     recElement.style.borderRadius = '5px';
     recElement.style.boxShadow = '0 4px 10px -2px black';
     recElement.style.textDecoration = 'none';
@@ -192,6 +192,7 @@ function closeWidget() {
     widget.style.bottom = '20px';
     widget.style.right = '20px';
     widget.style.borderRadius = '3px';
+    widget.style.zIndex = '999';
 
     var openButton = document.getElementById('open-button');
     openButton.style.borderRadius = '100px';
@@ -209,6 +210,7 @@ function openWidget() {
     <div id="browsing-panel">
         <div id="browsing-header">Recommendations</div>
         <div id="browsing-area"></div>
+        <div id="bottom-text">Responds within 2-3 seconds · jacques.ai.stylist@gmail.com</div>
     </div>
     <div id='chatbot'>
         <div id="chat-header">
@@ -225,7 +227,7 @@ function openWidget() {
     widget.style.position = 'fixed';
     widget.style.bottom = '20px';
     widget.style.right = '20px';
-    widget.style.height = '500px'
+    widget.style.height = '600px';
     widget.style.width = '800px';
     widget.style.border = '1px solid #ccc';
     widget.style.borderRadius = '10px';
@@ -233,27 +235,33 @@ function openWidget() {
     widget.style.display = 'grid';
     widget.style.gridTemplateColumns = '1fr 1fr';
     widget.style.gridAutoRows = '100%';
+    widget.style.zIndex = '999';
     widget.innerHTML = widgetHTML;
 
     // Browsing Panel CSS
     var browsingPanel = document.getElementById('browsing-panel');
     browsingPanel.style.backgroundColor = '#f0ede5';
+    browsingPanel.style.display = 'flex';
+    browsingPanel.style.flexDirection = 'column';
 
     var browsingHeader = document.getElementById('browsing-header');
     browsingHeader.style.padding = '10px';
     browsingHeader.style.color = 'black';
-    browsingHeader.style.fontSize = '18px';
-    browsingHeader.style.height = '20px';
+    browsingHeader.style.fontSize = '17px';
     browsingHeader.style.boxShadow = '0 4px 2px -2px gray';
     browsingHeader.style.position = 'relative';
     browsingHeader.style.fontFamily = 'Arial Black, Times, serif';
 
     var browsingArea = document.getElementById('browsing-area');
-    browsingArea.style.width = '100%';
-    browsingArea.style.height = '455px';
+    browsingArea.style.height = '100%';
     browsingArea.style.overflowY = 'auto';
     browsingArea.style.display = 'flex';
     browsingArea.style.flexWrap = 'wrap';
+
+    var bottomText = document.getElementById('bottom-text');
+    bottomText.style.textAlign = 'center';
+    bottomText.style.color = 'gray';
+    bottomText.style.fontSize = '12px';
 
     // Chatbot CSS
     var chatbot = document.getElementById('chatbot');
@@ -262,7 +270,6 @@ function openWidget() {
     var chatHeader = document.getElementById('chat-header');
     chatHeader.style.backgroundColor = 'black';
     chatHeader.style.padding = '10px';
-    chatHeader.style.height = '20px';
     chatHeader.style.color = 'white';
     chatHeader.style.display = 'flex';
     chatHeader.style.justifyContent = 'space-between';
@@ -271,7 +278,6 @@ function openWidget() {
     chatHeader.style.fontFamily = 'Arial Black, Times, serif';
 
     var closeButton = document.getElementById('close-button');
-    closeButton.style.height = '100%';
     closeButton.style.width = '6%';
     closeButton.style.cursor = 'pointer';
     closeButton.style.border = '1px solid';
@@ -279,36 +285,32 @@ function openWidget() {
     closeButton.style.backgroundColor = '#ed4040';
     closeButton.addEventListener('mouseover', function() {closeButton.style.backgroundColor = '#d12424';});
     closeButton.addEventListener('mouseout', function() {closeButton.style.backgroundColor = '#ed4040';});
-      
 
     var chatMessages = document.getElementById('chat-messages');
     chatMessages.style.padding = '10px';
     chatMessages.style.overflowY = 'auto';
-    chatMessages.style.height = '77%';
+    chatMessages.style.height = '80%';
 
     var inputArea = document.getElementById('chat-input');
     inputArea.style.position = 'relative';
     inputArea.style.padding = '5px';
-    inputArea.style.marginBottom = '0px';
+    inputArea.style.display = 'flex';
+    inputArea.style.justifyContent = 'space-between';
 
     var inputBox = document.getElementById('user-input');
-    inputBox.style.height = '30px';
     inputBox.style.width = '83%';
-    inputBox.style.padding = '5px 10px';
+    inputBox.style.padding = '3% 2%';
     inputBox.style.backgroundColor = 'rgb(60,60,60)';
     inputBox.style.color = 'white';
     inputBox.style.border = '1px solid';
 
     var sendButton = document.getElementById('send-button');
-    sendButton.style.display = 'inline-block'
-    sendButton.style.height = '40px';
-    sendButton.style.width = '40px';
-    sendButton.style.padding = '5px';
+    sendButton.style.padding = '3%';
     sendButton.style.cursor = 'pointer';
 
     if (messageData.length == 0) {
         BotResponse(user_response = 0, mandatory_response = "Welcome to the League of Rebels store ~ I'm Jacques, an AI suit connoisseur. What are you looking for today?");
-        storeMessage("Bonjour ~ I'm Jacques, an AI suit connoisseur. What brings you to League of Rebels today?", 'bot');
+        storeMessage("Welcome to the League of Rebels store ~ I'm Jacques, an AI suit connoisseur. What are you looking for today?", 'bot');
     }
     else {
         console.log(messageData.length);
@@ -329,6 +331,6 @@ function openWidget() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    closeWidget();
+    openWidget();
+    addRecommendation();
 });
-  

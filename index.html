@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color:darkslategray;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +10,14 @@
     <script src="src/chatbot.js"></script>
     <h1>Number: <span id="number">0</span></h1>
     <button id="incrementButton">Increment</button>
+    <div id="bottomright">tenjogksndjgnsd</div>
+    <script>
+        const bb = document.getElementById("bottomright");
+        bb.style.position = 'fixed';
+        bb.style.bottom = '20px';
+        bb.style.right = '20px';
+        bb.style.borderRadius = '3px';
+    </script>
     <script>
         const incrementButton = document.getElementById("incrementButton");
         const numberSpan = document.getElementById("number");
