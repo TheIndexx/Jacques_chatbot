@@ -192,7 +192,7 @@ function closeWidget() {
     widget.style.bottom = '20px';
     widget.style.right = '20px';
     widget.style.borderRadius = '3px';
-    widget.style.zIndex = '999';
+    widget.style.zIndex = '2147483647';
 
     var openButton = document.getElementById('open-button');
     openButton.style.borderRadius = '100px';
@@ -235,7 +235,7 @@ function openWidget() {
     widget.style.display = 'grid';
     widget.style.gridTemplateColumns = '1fr 1fr';
     widget.style.gridAutoRows = '100%';
-    widget.style.zIndex = '999';
+    widget.style.zIndex = '2147483647';
     widget.innerHTML = widgetHTML;
 
     // Browsing Panel CSS
@@ -266,6 +266,8 @@ function openWidget() {
     // Chatbot CSS
     var chatbot = document.getElementById('chatbot');
     chatbot.style.backgroundColor = 'rgb(30,30,30)';
+    chatbot.style.display = 'flex';
+    chatbot.style.flexDirection = 'column';
 
     var chatHeader = document.getElementById('chat-header');
     chatHeader.style.backgroundColor = 'black';
@@ -289,10 +291,9 @@ function openWidget() {
     var chatMessages = document.getElementById('chat-messages');
     chatMessages.style.padding = '10px';
     chatMessages.style.overflowY = 'auto';
-    chatMessages.style.height = '80%';
+    chatMessages.style.flexGrow = '1';
 
     var inputArea = document.getElementById('chat-input');
-    inputArea.style.position = 'relative';
     inputArea.style.padding = '5px';
     inputArea.style.display = 'flex';
     inputArea.style.justifyContent = 'space-between';
@@ -330,7 +331,8 @@ function openWidget() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    openWidget();
-    addRecommendation();
-});
+if (window.innerWidth >= 1024) {
+    document.addEventListener('DOMContentLoaded', function () {
+        closeWidget();
+    });    
+}
