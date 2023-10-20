@@ -21,9 +21,9 @@ function storeRecs(image_link, name, price) {
 }
 
 async function getModelOutput(message, chat_history) {
-    let response = await fetch("https://stylist-api.vercel.app/get-response/" + message.replace(/\s/g, '-') + "?history=" + chat_history.map(item => item.content).slice(0,chat_history.length-1).join("%&#").replace(/\s/g, '-'));
+    let response = await fetch("https://stylist-api.vercel.app/get-response/" + message.replace(/\s/g, '-') + "?history=" + chat_history.map(item => item.content).slice(0,chat_history.length-1).join("-$-").replace(/\s/g, '-'));
     console.log(chat_history)
-    console.log("https://stylist-api.vercel.app/get-response/" + message.replace(/\s/g, '-') + "?history=" + chat_history.map(item => item.content).slice(0,chat_history.length-1).join("%&#").replace(/\s/g, '-'));
+    console.log("https://stylist-api.vercel.app/get-response/" + message.replace(/\s/g, '-') + "?history=" + chat_history.map(item => item.content).slice(0,chat_history.length-1).join("-$-").replace(/\s/g, '-'));
     console.log(response);
     let output = await response.json();
     return output['bot_response']
@@ -336,6 +336,8 @@ function openWidget() {
     }
 }
 
-if (window.innerWidth >= 1024) {
-    closeWidget();
-}
+document.addEventListener("DOMContentLoaded", function() { 
+    if (window.innerWidth >= 1024) {
+        closeWidget();
+    }
+});
