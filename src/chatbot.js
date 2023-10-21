@@ -22,11 +22,9 @@ function storeRecs(image_link, name, price) {
 
 async function getModelOutput(message, chat_history) {
     let response = await fetch("https://stylist-api.vercel.app/get-response/" + message.replace(/\s/g, '-') + "?history=" + chat_history.map(item => item.content).slice(0,chat_history.length-1).join("-$-").replace(/\s/g, '-'));
-    console.log(chat_history)
-    console.log("https://stylist-api.vercel.app/get-response/" + message.replace(/\s/g, '-') + "?history=" + chat_history.map(item => item.content).slice(0,chat_history.length-1).join("-$-").replace(/\s/g, '-'));
-    console.log(response);
     let output = await response.json();
-    return output['bot_response']
+    console.log(output);
+    return [output['bot_response'], output['side_bar'][0], output['side_bar'][1], output['side_bar'][2]]
 }
 
 function handleUserInput(event) {
@@ -107,15 +105,19 @@ function BotResponse(user_response = 0, mandatory_response = 0) {
         loadingText.style.marginRight = "50%";
         chatMessages.appendChild(loadingText);
 
-        getModelOutput(user_response, messageData)
+        getModelOutput(user_response, messageData.slice(1))
             .then(output => {
-                message = output;
+                message = output[0];
                 console.log("Api Done: "+new Date());
                 return output;
             })
             .then(output => {
                 storeMessage(message, 'bot');
-                addRecommendation();
+                clearRecommendations();
+                console.log(output[1]['img-url'])
+                addRecommendation(image_link=output[1]['img-url'], image_title=output[1]['name']);
+                addRecommendation(image_link=output[2]['img-url'], image_title=output[2]['name']);
+                addRecommendation(image_link=output[3]['img-url'], image_title=output[3]['name']);
                 storeRecs();
                 botMessageElement.textContent = message;
                 chatMessages.appendChild(botMessageElement);
@@ -130,6 +132,15 @@ function BotResponse(user_response = 0, mandatory_response = 0) {
                 chatMessages.scrollTop = chatMessages.scrollHeight;
                 chatMessages.removeChild(loadingText);
             });
+    }
+}
+
+function clearRecommendations() {
+    var elementsToRemove = document.querySelectorAll('.recommendation');
+
+    for (var i = 0; i < elementsToRemove.length; i++) {
+        var element = elementsToRemove[i];
+        element.parentNode.removeChild(element);
     }
 }
 
