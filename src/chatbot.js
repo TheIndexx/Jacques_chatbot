@@ -21,7 +21,7 @@ function storeRecs(image_link, name, price) {
 }
 
 async function getModelOutput(message, chat_history) {
-    let response = await fetch("https://stylist-api.vercel.app/get-response/" + message.replace(/\s/g, '-') + "?history=" + chat_history.map(item => item.content).slice(0,chat_history.length-1).join("-$-").replace(/\s/g, '-'));
+    let response = await fetch("https://stylist-api.vercel.app/get-response/" + message.replace(/\s/g, '-') + "?history=" + chat_history.map(item => item.content).slice(0,chat_history.length-1).join("+$+").replace(/\s/g, '-'));
     let output = await response.json();
     console.log(output);
     return [output['bot_response'], output['side_bar'][0], output['side_bar'][1], output['side_bar'][2]]
@@ -105,7 +105,7 @@ function BotResponse(user_response = 0, mandatory_response = 0) {
         loadingText.style.marginRight = "50%";
         chatMessages.appendChild(loadingText);
 
-        getModelOutput(user_response, messageData.slice(1))
+        getModelOutput(user_response, messageData)
             .then(output => {
                 message = output[0];
                 console.log("Api Done: "+new Date());
@@ -114,10 +114,9 @@ function BotResponse(user_response = 0, mandatory_response = 0) {
             .then(output => {
                 storeMessage(message, 'bot');
                 clearRecommendations();
-                console.log(output[1]['img-url'])
-                addRecommendation(image_link=output[1]['img-url'], image_title=output[1]['name']);
-                addRecommendation(image_link=output[2]['img-url'], image_title=output[2]['name']);
-                addRecommendation(image_link=output[3]['img-url'], image_title=output[3]['name']);
+                addRecommendation(image_link=output[1]['img-url'], product_title=output[1]['name'], product_price=output[1]['price'], product_link=output[1]['link']);
+                addRecommendation(image_link=output[2]['img-url'], product_title=output[2]['name'], product_price=output[2]['price'], product_link=output[2]['link']);
+                addRecommendation(image_link=output[3]['img-url'], product_title=output[3]['name'], product_price=output[3]['price'], product_link=output[3]['link']);
                 storeRecs();
                 botMessageElement.textContent = message;
                 chatMessages.appendChild(botMessageElement);
@@ -145,8 +144,8 @@ function clearRecommendations() {
 }
 
 function addRecommendation(image_link="https://cdn.shoplightspeed.com/shops/639523/files/54751377/465x620x2/sb2-spelman-jacket.jpg",
-                            image_title="SB2 Spelman Jacket Astafirullagh",
-                            image_price="$349.00",
+                            product_title="SB2 Spelman Jacket Astafirullagh",
+                            product_price="$349.00",
                             product_link="https://www.leagueofrebels.com/sb2-spelman-jacket.html") {
     const browsingArea = document.getElementById("browsing-area");
     const recElement = document.createElement("a");
@@ -170,7 +169,7 @@ function addRecommendation(image_link="https://cdn.shoplightspeed.com/shops/6395
 
     const title = document.createElement("div");
     title.classList.add("recommendation_info");
-    title.textContent = image_title ;
+    title.textContent = product_title ;
     title.style.fontFamily = 'Arial Black, Times, serif';
     title.style.fontSize = '16px';
     title.style.marginLeft = '3px';
@@ -180,7 +179,7 @@ function addRecommendation(image_link="https://cdn.shoplightspeed.com/shops/6395
 
     const price = document.createElement("div");
     price.classList.add("recommendation_info");
-    price.textContent = image_price ;
+    price.textContent = product_price ;
     price.style.fontFamily = 'Arial Black, Times, serif';
     price.style.fontSize = '13px';
     price.style.marginLeft = '3px';
