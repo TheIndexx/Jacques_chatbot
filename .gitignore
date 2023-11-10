@@ -1,1 +1,7 @@
-api/.env
+.env
+.DS_Store
+api/__pycache__
+chatbot_ui/package-lock.json
+chatbot_ui/package.json
+api/launch.sh
+api/local_model_testing.py
