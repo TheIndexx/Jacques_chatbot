@@ -21,7 +21,7 @@ function storeRecs(image_link, name, price) {
 }
 
 async function getModelOutput(message, chat_history) {
-    let response = await fetch("https://stylist-api.vercel.app/get-response/" + message.replace(/\s/g, '-') + "?history=" + chat_history.map(item => item.content).slice(0,chat_history.length-1).join("+$+").replace(/\s/g, '-'));
+    let response = await fetch("https://jacques-chatbot.vercel.app/get-response/" + message.replace(/\s/g, '-') + "?history=" + chat_history.map(item => item.content).slice(0,chat_history.length-1).join("+$+").replace(/\s/g, '-'));
     let output = await response.json();
     console.log(output);
     return [output['bot_response'], output['side_bar'][0], output['side_bar'][1], output['side_bar'][2]]
