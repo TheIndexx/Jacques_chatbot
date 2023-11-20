@@ -6,4 +6,3 @@ chatbot_ui/package.json
 api/launch.sh
 api/local_model_testing.py
 .vercel
-vercel.json

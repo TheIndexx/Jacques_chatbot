@@ -1,0 +1,22 @@
+{  
+    "builds": [
+        {
+            "src":"app.py",
+            "use":"@vercel/python"
+        }
+    ],
+    "routes": [
+        {
+            "src":"/(.*)",
+            "dest":"app.py"
+        }
+    ],
+    "projectSettings": {
+        "buildCommand": null,
+        "devCommand": null,
+        "framework": null,
+        "commandForIgnoringBuildStep": "",
+        "installCommand": "pip install -r requirements.txt",
+        "outputDirectory": null
+    }
+}
