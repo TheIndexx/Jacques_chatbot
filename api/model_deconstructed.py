@@ -5,6 +5,7 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain.vectorstores import Pinecone
 import pinecone
 import re
+from pymongo import MongoClient
 
 
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -154,48 +155,47 @@ Answer:""",
         # general final answer
         qa_formatted = self.qa_template.format(question=standalone, documents=documents)
         answer = self.qa_llm.predict(qa_formatted)
+        print("Answer:", answer)
         return answer, hist, sidebar_data
         
-# def main():
-#     uri = "mongodb+srv://u1:u1@cluster0.4cpubm9.mongodb.net/?retryWrites=true&w=majority"
-#     # Create a new client and connect to the server
-#     client = MongoClient(uri)
-#     # Send a ping to confirm a successful connection
-#     try:
-#         client.admin.command('ping')
-#         print("Pinged your deployment. You successfully connected to MongoDB!")
-#     except Exception as e:
-#         print(e)
+def main():
+    uri = "mongodb+srv://u1:u1@cluster0.4cpubm9.mongodb.net/?retryWrites=true&w=majority"
+    # Create a new client and connect to the server
+    client = MongoClient(uri)
+    # Send a ping to confirm a successful connection
+    try:
+        client.admin.command('ping')
+        print("Pinged your deployment. You successfully connected to MongoDB!")
+    except Exception as e:
+        print(e)
 
-#     db = client.get_database('LOR')
-#     records = db.get_collection('item-data')
+    db = client.get_database('LOR')
+    records = db.get_collection('item-data')
 
-#     c = Chain()
-#     # history = [("I am looking for a suit", "What color suit are you looking for?")]
-#     # query = "Do you have a black one?"
+    c = Chain()
+    # history = [("I am looking for a suit", "What color suit are you looking for?")]
+    # query = "Do you have a black one?"
 
-#     history = [("I am going to a party that is forest themed and am planning an outfit", "Thats great what do you need help with?")]
-#     query = "What suits would fit the theme?"
+    history = "I am going to a party that is forest themed and am planning an outfit+$+Thats great what do you need help with?"
+    query = "What suits would fit the theme?"
 
-#     input = {
-#         "question": query,
-#         "chat_history": history
-#     }
+    input = {
+        "question": query,
+        "chat_history": history
+    }
 
-#     r = c.get_response(input, records)
-
-
-#     # # products = '/Users/michaelpasala/Projects/Stylist/app-starter-kit/SampleProducts.csv'
-#     # # general_info = '/Users/michaelpasala/Projects/Stylist/app-starter-kit/store_info.txt'
-#     # a = Chain()
-#     # # a.response("I am looking for a blazer.")
-#     # print(a.response("What suits do you have in black?", []))
-
-#     # # print(a.response("What is the phone number of the store?"))
-
-#     # # V = Vectorbase()
-#     # # print(V.search())
+    r = c.get_response(input, records)
 
 
-# if __name__ == "__main__":
-#     main()
+    # a = Chain()
+    # # a.response("I am looking for a blazer.")
+    # print(a.response("What suits do you have in black?", []))
+
+    # # print(a.response("What is the phone number of the store?"))
+
+    # # V = Vectorbase()
+    # # print(V.search())
+
+
+if __name__ == "__main__":
+    main()

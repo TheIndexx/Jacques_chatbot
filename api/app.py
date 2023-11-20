@@ -73,6 +73,7 @@ def get_response(user_query):
     allowed_origin = request.headers.get('Origin')
     j.headers.add('Access-Control-Allow-Origin', allowed_origin)
     j.headers.add('Access-Control-Allow-Credentials', 'true')
+    print("Successfully retrieved response")
     return j, 200 # json, response code
 
 
