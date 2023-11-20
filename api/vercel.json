@@ -1,4 +1,4 @@
-{  
+{
     "builds": [
         {
             "src":"app.py",
@@ -11,12 +11,5 @@
             "dest":"app.py"
         }
     ],
-    "projectSettings": {
-        "buildCommand": null,
-        "devCommand": null,
-        "framework": null,
-        "commandForIgnoringBuildStep": "",
-        "installCommand": "pip install -r requirements.txt",
-        "outputDirectory": null
-    }
+    "installCommand": "pip install -r requirements.txt"
 }
