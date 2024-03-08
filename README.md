@@ -1,3 +1,3 @@
 # Jacques_chatbot
 
-Used GPT-4 to personalize product search and discovery on fashion sites through chatbot. See demo in action: www.truffl.org
+Personalize product discovery on fashion sites. Connected GPT-4 API with MongoDB database containing store products and tags. Used Langchain and Pinecone to connect vectorized data to LLM, provided hosted on Vercel. Deployed on 6 local Austin stores before stopping project.
